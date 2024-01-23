@@ -10,11 +10,15 @@ typedef enum{
 } Types;
 
 typedef struct{
-    float coord[4][2];
-} collisionMaskCoordinates;
+    float x, y;
+}vector2D;
 
 typedef struct{
-    float x, y;
+    float coord[4][2];
+}collisionMaskCoordinates;
+
+typedef struct{
+    vector2D vector;
     float grvValue;
     char* name;
     bool grv;

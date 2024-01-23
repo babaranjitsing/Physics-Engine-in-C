@@ -5,28 +5,28 @@ void createCollisionMask(Object* object){
     drawRectangle(
         object->display,
         object->window,
-        object->x - object->width/2,
-        object->y - object->height/2,
+        object->vector.x - object->width/2,
+        object->vector.y - object->height/2,
         object->width,
         object->height,
         false
     );
 
     //upper left
-    object->collisionMask.coord[0][0] = object->x - object->width/2;
-    object->collisionMask.coord[0][1] = object->y - object->height/2;
+    object->collisionMask.coord[0][0] = object->vector.x - object->width/2;
+    object->collisionMask.coord[0][1] = object->vector.y - object->height/2;
 
     //upper right
-    object->collisionMask.coord[1][0] = object->x + object->width/2;
-    object->collisionMask.coord[1][1] = object->y - object->height/2;
+    object->collisionMask.coord[1][0] = object->vector.x + object->width/2;
+    object->collisionMask.coord[1][1] = object->vector.y - object->height/2;
 
     //lower right
-    object->collisionMask.coord[2][0] = object->x + object->width/2;
-    object->collisionMask.coord[2][1] = object->y + object->height/2;
+    object->collisionMask.coord[2][0] = object->vector.x + object->width/2;
+    object->collisionMask.coord[2][1] = object->vector.y + object->height/2;
 
     //lower left
-    object->collisionMask.coord[3][0] = object->x - object->width/2;
-    object->collisionMask.coord[3][1] = object->y + object->height/2;
+    object->collisionMask.coord[3][0] = object->vector.x - object->width/2;
+    object->collisionMask.coord[3][1] = object->vector.y + object->height/2;
 
 }
 
@@ -39,8 +39,8 @@ void createObject(Object* object){
         drawCircle(
             object->display,
             object->window,
-            object->x,
-            object->y,
+            object->vector.x,
+            object->vector.y,
             object->radius,
             true,
             false
@@ -52,8 +52,8 @@ void createObject(Object* object){
         drawRectangle(
             object->display,
             object->window,
-            object->x - object->width/2,
-            object->y - object->height/2,
+            object->vector.x - object->width/2,
+            object->vector.y - object->height/2,
             object->width,
             object->height,
             true
@@ -63,14 +63,15 @@ void createObject(Object* object){
     createCollisionMask(object);
 }
 
-bool checkCollisionObjects(Object* obj1, Object* obj2){
+bool checkCollisionObjects(Object *obj1, Object *obj2)
+{
 
-    if(
+    if (
         obj1->collisionMask.coord[0][0] < obj2->collisionMask.coord[1][0] &&
         obj1->collisionMask.coord[1][0] > obj2->collisionMask.coord[0][0] &&
         obj1->collisionMask.coord[0][1] < obj2->collisionMask.coord[3][1] &&
-        obj1->collisionMask.coord[3][1] > obj2->collisionMask.coord[0][1]
-    ){
+        obj1->collisionMask.coord[3][1] > obj2->collisionMask.coord[0][1])
+    {
         return true;
     }
 
@@ -82,15 +83,16 @@ void updateObject(Object* object, float *x_offset, float y_offset, float acceler
     createObject(object);
 
     if(
-        object->x + object->width/2 + (*x_offset) > WindowWidth ||
-        object->x - object->width/2 + (*x_offset) < 0
+        (*x_offset) != 0 &&
+        (object->vector.x + object->width/2 + (*x_offset) > WindowWidth ||
+        object->vector.x - object->width/2 + (*x_offset) < 0)
     ){
         (*x_offset) *= -object->elasticityFactor;
     }
     
 
     if(object->grv){
-        if(object->y + object->radius + object->grvValue < WindowHeight){
+        if(object->vector.y + object->radius + object->grvValue < WindowHeight){
             object->grvValue += acceleration * object->weight;
         } else {
             if (object->elasticity) {
@@ -98,19 +100,19 @@ void updateObject(Object* object, float *x_offset, float y_offset, float acceler
                 (*x_offset) *= -object->elasticityFactor;
             } else {
                 object->grvValue = 0;
-                object->y = WindowHeight;
+                object->vector.y = WindowHeight - object->radius;
             }
         }
 
-        object->y += object->grvValue;
+        object->vector.y += object->grvValue;
     }
 
     if((*x_offset) != 0){
-        object->x += (*x_offset);
+        object->vector.x += (*x_offset);
     }
 
     if(y_offset != 0){
-        object->y += y_offset;
+        object->vector.y += y_offset;
     }
 
     delay(15);

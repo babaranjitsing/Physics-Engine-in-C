@@ -11,11 +11,10 @@ int main(){
     createWindow(&display, &window);
 
     Object player = {
-        .x = 200,
-        .y = 0,
+        .vector = {100.0, 0.0},
         .grv = true,
         .elasticity = true,
-        .elasticityFactor = 0.9,
+        .elasticityFactor = 0.75,
         .weight = 1,
         .type = CIRCLE,
         .radius = 20,
@@ -25,12 +24,11 @@ int main(){
     };
 
     Object player2 = {
-        .x = 200,
-        .y = 100,
+        .vector = {100.0, 100.0},
         .grv = true,
         .elasticity = true,
-        .elasticityFactor = 0.9,
-        .weight = 5,
+        .elasticityFactor = 0.75,
+        .weight = 1,
         .type = CIRCLE,
         .radius = 20,
         .display = display,
@@ -38,7 +36,8 @@ int main(){
         .name = "Player 2",
     };
 
-    float x_offset = 5;
+    float x_offset = 0;
+    float acc = 1.5;
 
     while(true){
 
@@ -46,15 +45,15 @@ int main(){
 
         updateFrame(display, window, true);
         
-        updateObject(&player, &x_offset, 0, 1.5);
-        updateObject(&player2, &x_offset, 0, 1.5);
+        updateObject(&player, &x_offset, 0, acc);
+        updateObject(&player2, &x_offset, 0, acc);
 
         sprintf(text, "x: %d, y: %d", x, y);
         drawMessage(display, window, text, 10, 10);
         
         drawMessage(display, window, player.name, 10, 20);
         
-        sprintf(text, "x: %f, y: %f", player.x, player.y);
+        sprintf(text, "x: %f, y: %f", player.vector.x, player.vector.y);
         drawMessage(display, window, text, 10, 30);
         
         sprintf(text, "Frame Rate: %d", frameRate);
