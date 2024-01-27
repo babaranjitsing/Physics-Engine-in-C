@@ -30,13 +30,15 @@ void destroyWindow(Display *display, Window window);
 
 void delay(int milliseconds);
 
-void updateFrame(Display* display, Window window, bool showFrameRate);
+void updateFrame(Display *display, Window window, bool showFrameRate, bool slomo);
 
-void drawLine(Display* display, Window window, int x1, int y1, int x2,int y2);
+void drawLine(Display *display, Window window, int x1, int y1, int x2, int y2);
 
-void drawCircle(Display* display, Window window, int x, int y, int radius, bool fill, bool draw);
+void drawCircle(Display *display, Window window, int x, int y, int radius, bool fill, bool pen);
 
-void drawRectangle(Display* display, Window window, int x, int y, int width, int height, bool fill);
+void drawRectangle(Display *display, Window window, int x, int y, int width, int height, bool fill);
+
+void drawPolygon(Display *display, Window window, float coord[][2]);
 
 void getMousePosition(Display *display, Window window, int *x, int *y);
 

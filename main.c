@@ -1,73 +1,116 @@
 #include "headerFiles/graphics.h"
 #include "headerFiles/engine.h"
 
+#define TLOBJ 2
+
 int main(){
+
+    Display *gameDisplay, *infoDisplay;
+    Window gameWindow, infoWindow;
+
+    createWindow(&infoDisplay, &infoWindow);
+    createWindow(&gameDisplay, &gameWindow);
+
+    Object ball ={
+        .name = "Ball",
+        .color = "red",
+        .type = CIRCLE,
+        .vector = {
+            .x = 100,
+            .y = 0,
+        },
+        .radius = 20,
+        .grv = true,
+        .elasticity = true,
+        .friction = true,
+        .elasticityFactor = 0.9,
+        .frictionFactor = 0.3,
+        .weight = 1,
+        .display = gameDisplay,
+        .window = gameWindow,
+        .x_offset = 10
+    };
     
-    Display *display;
-    Window window;
-    int x, y;
-    char text[CRD];
-
-    createWindow(&display, &window);
-
-    Object player = {
-        .vector = {100.0, 0.0},
+    Object ball2 ={
+        .name = "Ball",
+        .color = "red",
+        .type = CIRCLE,
+        .vector = {
+            .x = 300,
+            .y = 0,
+        },
+        .radius = 20,
         .grv = true,
         .elasticity = true,
-        .elasticityFactor = 0.75,
+        .friction = true,
+        .elasticityFactor = 0.9,
+        .frictionFactor = 0.3,
         .weight = 1,
-        .type = CIRCLE,
-        .radius = 20,
-        .display = display,
-        .window = window,
-        .name = "Player 1",
+        .display = gameDisplay,
+        .window = gameWindow,
+        .x_offset = -10
     };
 
-    Object player2 = {
-        .vector = {100.0, 100.0},
-        .grv = true,
-        .elasticity = true,
-        .elasticityFactor = 0.75,
-        .weight = 1,
-        .type = CIRCLE,
-        .radius = 20,
-        .display = display,
-        .window = window,
-        .name = "Player 2",
-    };
-
-    float x_offset = 0;
-    float acc = 1.5;
+    char text[CRD*2];
+    Object *objects[TLOBJ] = {&ball, &ball2};
+    acceleration = 1.5;
 
     while(true){
 
-        getMousePosition(display, window, &x, &y);
+        updateFrame(infoDisplay, infoWindow, false, false);
+        updateFrame(gameDisplay, gameWindow, false, false);
 
-        updateFrame(display, window, true);
-        
-        updateObject(&player, &x_offset, 0, acc);
-        updateObject(&player2, &x_offset, 0, acc);
+        updateObject(objects, TLOBJ);
 
-        sprintf(text, "x: %d, y: %d", x, y);
-        drawMessage(display, window, text, 10, 10);
-        
-        drawMessage(display, window, player.name, 10, 20);
-        
-        sprintf(text, "x: %f, y: %f", player.vector.x, player.vector.y);
-        drawMessage(display, window, text, 10, 30);
-        
-        sprintf(text, "Frame Rate: %d", frameRate);
-        drawMessage(display, window, text, 10, 40);
+        sprintf(
+            text,
+            "Name Object1: %s\n"
+            "X: %f\n"
+            "Y: %f\n"
+            "X_offset: %f\n"
+            "Friction Factor: %f\n"
+            "Elasticity Factor: %lf\n"
+            "Weight: %f\n"
+            "Grounded: %s\n",
+            ball.name,
+            ball.vector.x,
+            ball.vector.y,
+            ball.x_offset,
+            ball.frictionFactor,
+            (double)ball.elasticityFactor,
+            ball.weight,
+            ball.grounded ? "true" : "false"
+        );
 
-        // if(checkCollisionObjects(&player, &player2)){
-        //     sprintf(text, "Collision: true");
-        // }else{
-        //     sprintf(text, "Collision: false");
-        // }
-        // drawMessage(display, window, text, 10, 50);
+        drawMessage(infoDisplay, infoWindow, text, 10, 10);
+
+        sprintf(
+            text,
+            "Name Object2: %s\n"
+            "X: %f\n"
+            "Y: %f\n"
+            "X_offset: %f\n"
+            "Friction Factor: %f\n"
+            "Elasticity Factor: %lf\n"
+            "Weight: %f\n"
+            "Grounded: %s\n",
+            ball2.name,
+            ball2.vector.x,
+            ball2.vector.y,
+            ball2.x_offset,
+            ball2.frictionFactor,
+            (double)ball2.elasticityFactor,
+            ball2.weight,
+            ball2.grounded ? "true" : "false"
+        );
+
+        drawMessage(infoDisplay, infoWindow, text, 220, 10);
+
+        sprintf(text, "collision: %s", checkCollisionObjects(&ball, objects, TLOBJ) ? "true" : "false");
+        drawMessage(infoDisplay, infoWindow, text, 125, 125);
+
     }
 
-    destroyWindow(display, window);
+    destroyWindow(gameDisplay, gameWindow);
 
-    exit(EXIT_SUCCESS);
 }
